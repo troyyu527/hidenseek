@@ -1,0 +1,31 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 10px;
+  padding: 5px;
+  background-color: rgb(170, 153, 229);
+}
+body .control button {
+  padding: 2px 5px;
+  margin: 3px 3px;
+}
+body .control .select-group label {
+  padding-right: 5px;
+}
+body .maze {
+  display: flex;
+  justify-content: center;
+}
+body .maze main {
+  width: 800px;
+  height: 400px;
+  display: flex;
+  position: relative;
+  border: 5px solid black;
+  background-color: gainsboro;
+  padding: 10px;
+  margin: 10px;
+}/*# sourceMappingURL=style.css.map */

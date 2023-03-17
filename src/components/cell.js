@@ -25,7 +25,7 @@ function Cell({node,cellSize,cellClick}){
             className="wall"
             width={cellSize.spacingX}
             height={cellSize.spacingY}
-            href="/img/wall.png"
+            href="./img/wall.png"
             // style={{position:"absolute", zIndex: 2 }}
           >
           </image>
@@ -35,7 +35,7 @@ function Cell({node,cellSize,cellClick}){
             className="sand"
             width={cellSize.spacingX}
             height={cellSize.spacingY}
-            href="/img/sand.png"
+            href="./img/sand.png"
             // style={{position:"absolute", zIndex: 2 }}
           >
           </image>

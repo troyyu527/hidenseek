@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/hidenseek/static/js/runtime~main.41d0fef3.js"
   },
   {
-    "revision": "c4da03cf33d9037b89a8f236c4ec6c19",
+    "revision": "21a27f4cb5ab14620e572967db408c76",
     "url": "/hidenseek/index.html"
   }
 ];

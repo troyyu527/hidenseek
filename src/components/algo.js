@@ -47,8 +47,8 @@ export function initialSta(dataModel){
   let goalIndex = Math.floor(Math.random()*dataModel.nodes.length)
   let startNode = dataModel.nodes[startIndex]
   let goalNode = dataModel.nodes[goalIndex]
-  let start={name:"Start",node:startNode,x:startNode.x,y:startNode.y,preX:startNode.x,preY:startNode.y,ref:"./img/pain-point.png"}
-  let goal={name:"Goal",node:goalNode,x:goalNode.x,y:goalNode.y,preX:goalNode.x,preY:goalNode.y,ref:"./img/finish-flag.png"}
+  let start={name:"Start",node:startNode,x:startNode.x,y:startNode.y,preX:startNode.x,preY:startNode.y,ref:"%PUBLIC_URL%/img/pain-point.png"}
+  let goal={name:"Goal",node:goalNode,x:goalNode.x,y:goalNode.y,preX:goalNode.x,preY:goalNode.y,ref:"%PUBLIC_URL%/img/finish-flag.png"}
   return [start,goal]
 }
 

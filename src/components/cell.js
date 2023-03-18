@@ -1,4 +1,6 @@
 import React from "react";
+import wall from "../img/wall.png"
+import sand from "../img/sand.png"
 
 function Cell({node,cellSize,cellClick}){
  
@@ -25,8 +27,8 @@ function Cell({node,cellSize,cellClick}){
             className="wall"
             width={cellSize.spacingX}
             height={cellSize.spacingY}
-            href="%PUBLIC_URL%/img/wall.png"
-            // style={{position:"absolute", zIndex: 2 }}
+            href={wall}
+            
           >
           </image>
         )}
@@ -35,8 +37,8 @@ function Cell({node,cellSize,cellClick}){
             className="sand"
             width={cellSize.spacingX}
             height={cellSize.spacingY}
-            href="%PUBLIC_URL%/img/sand.png"
-            // style={{position:"absolute", zIndex: 2 }}
+            href={sand}
+          
           >
           </image>
         )}

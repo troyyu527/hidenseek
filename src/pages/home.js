@@ -25,8 +25,16 @@ function Page(){
   
   
   const run = async() =>{
+    const svg= document.querySelector("svg")
+    const buttons = document.querySelectorAll("button")
+    
+    svg.setAttribute("pointer-events","none")
+    buttons.forEach((btn)=>btn.disabled=true)
     const result = await Dijkstra(grid,MH,stations[0],stations[1],setGrid)
     await shortestPath(result,setGrid,distRef)
+    
+    svg.setAttribute("pointer-events","auto")
+    buttons.forEach((btn)=>btn.disabled=false)
   }
 
 
@@ -60,7 +68,6 @@ function Page(){
     setGrid(newGrid)
   }
   const randMaze = () =>{
-    console.log("genMaze")
     let newGrid = genMaze(nameGrid,grid,stations,map)
     setGrid([...newGrid])
   }

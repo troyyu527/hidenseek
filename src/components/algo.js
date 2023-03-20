@@ -84,7 +84,7 @@ export async function Dijkstra(nodes,MH,start,end,setGrid){
     // 4. neighborNode.distance = currentNode.distance + weight
     // 5. neighborNode.previous = currentNode, MH decrease neighborNode's priority
     currentNode.neighbor.forEach(neighborNode => {
-      if (!neighborNode.visited) {
+      if (!neighborNode.visited && neighborNode.weight!==Infinity) {
         if (neighborNode.distFromStart > currentNode.distFromStart + neighborNode.weight) {
           neighborNode.distFromStart = currentNode.distFromStart + neighborNode.weight;
           neighborNode.previous = currentNode;
@@ -202,7 +202,6 @@ export function genMaze(nameGrid,grid,stations,map){
     } 
   })
   let totalList=[leftList,topList,rightList,botList]
-  console.log(totalList)
   grow(totalList,map,stations,grid)
   return grid
 }

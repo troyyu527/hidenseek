@@ -68,6 +68,7 @@ function Page(){
     setGrid(newGrid)
   }
   const randMaze = () =>{
+    reset()
     let newGrid = genMaze(nameGrid,grid,stations,map)
     setGrid([...newGrid])
   }

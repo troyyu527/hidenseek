@@ -71,20 +71,20 @@ export async function Dijkstra(nodes,MH,start,end,setGrid){
       startNode.visited = true;
     } 
     if(node.name===end.node.name) endNode = node
-
-    MH.enqueue(node)
+    if(node.state!=="wall") MH.enqueue(node)
   })
   startNode.distFromStart = 0;
   startNode.visited = true;
   //1.Get shortest dist. Node (starting from startNode dist=0)
   let currentNode = MH.dequeue();
   while (MH.values.length > 0) {
+
     // 2. node => neighborNode
     // 3. neighborNode.distance > currentNode.distance + weight
     // 4. neighborNode.distance = currentNode.distance + weight
     // 5. neighborNode.previous = currentNode, MH decrease neighborNode's priority
     currentNode.neighbor.forEach(neighborNode => {
-      if (!neighborNode.visited && neighborNode.weight!==Infinity) {
+      if (!neighborNode.visited && neighborNode.state!=="wall") {
         if (neighborNode.distFromStart > currentNode.distFromStart + neighborNode.weight) {
           neighborNode.distFromStart = currentNode.distFromStart + neighborNode.weight;
           neighborNode.previous = currentNode;
@@ -98,7 +98,7 @@ export async function Dijkstra(nodes,MH,start,end,setGrid){
     
     currentNode.visited = true;
     count++
-    if(count>5*layerCount && count%5===0){
+    if(count>1*layerCount && count%1===0){
       setGrid([...nodes])
       await delay(0)
       layerCount++

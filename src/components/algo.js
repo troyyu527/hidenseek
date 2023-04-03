@@ -92,8 +92,10 @@ export async function Dijkstra(nodes,MH,start,end,setGrid){
         }
       }
     });
+    
     currentNode = MH.dequeue();
- 
+    
+    if(!currentNode.previous) return [travelList,nodes]
     if(currentNode===endNode) break
     
     currentNode.visited = true;
@@ -116,21 +118,32 @@ export async function Dijkstra(nodes,MH,start,end,setGrid){
 }
 
 export async function shortestPath(result,setGrid,distRef){
-  let nodes = result[1]
   let travelList=result[0]
-  const distance = travelList[travelList.length-1].distFromStart
-  nodes.forEach(node=>{
-    node.visited=false;
-    node.distFromStart=Infinity;
-    node.previous=null;
-  })
-  for(let node of travelList){
-    node.color="green"
+  let nodes = result[1]
+  let length =travelList.length
+  if(length){
+    let distance = travelList[length-1].distFromStart
+    nodes.forEach(node=>{
+      node.visited=false;
+      node.distFromStart=Infinity;
+      node.previous=null;
+    })
+    for(let node of travelList){
+      node.color="green"
+      setGrid([...nodes])
+      await delay(5)
+    }
+    
+    distRef.current.textContent = distance
+  }else{
+    nodes.forEach(node=>{
+      node.visited=false;
+      node.distFromStart=Infinity;
+      node.previous=null;
+    })
     setGrid([...nodes])
-    await delay(5)
   }
   
-  distRef.current.textContent = distance
 }
 
 export function genMaze(nameGrid,grid,stations,map){

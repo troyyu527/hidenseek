@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/hidenseek/precache-manifest.b72f89565840a4be60d616712836c8c2.js"
+  "/hidenseek/precache-manifest.ab03aa0c24c477ced8418a886f81984a.js"
 );
 
 workbox.clientsClaim();

@@ -102,7 +102,7 @@ export async function Dijkstra(nodes,MH,start,end,setGrid){
     count++
     if(count>1*layerCount && count%1===0){
       setGrid([...nodes])
-      await delay(0)
+      await delay(100)
       layerCount++
     }
   }
@@ -142,6 +142,7 @@ export async function shortestPath(result,setGrid,distRef){
       node.previous=null;
     })
     setGrid([...nodes])
+    distRef.current.textContent = "Unknown"
   }
   
 }

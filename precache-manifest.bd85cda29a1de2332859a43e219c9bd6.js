@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "442996248f74edc05321",
+    "revision": "da84048fcac7100ee3d2",
     "url": "/hidenseek/static/css/main.d0a5fff1.chunk.css"
   },
   {
-    "revision": "442996248f74edc05321",
-    "url": "/hidenseek/static/js/main.44299624.chunk.js"
+    "revision": "da84048fcac7100ee3d2",
+    "url": "/hidenseek/static/js/main.da84048f.chunk.js"
   },
   {
     "revision": "c6e7f4afa11efd9bcb1e",
@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/hidenseek/static/js/runtime~main.41d0fef3.js"
   },
   {
-    "revision": "ee000e5747252abab0e3d85d564b97f7",
+    "revision": "84a7766bef4bc46087f51880cb7d4bf9",
     "url": "/hidenseek/index.html"
   }
 ];

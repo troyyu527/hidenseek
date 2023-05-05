@@ -1,5 +1,5 @@
 class Node{
-  constructor(name,x=null,y=null){
+  constructor(name,x=null,y=null,ox=null,oy=null){
     this.name=name
     this.visited=false
     this.neighbor=[]
@@ -7,7 +7,10 @@ class Node{
     this.previous = null;
     this.state="regular"
     this.color="darkgray"
+    this.isVisit=false
     this.weight=1
+    this.ox=ox
+    this.oy=oy
     this.x=x
     this.y=y
   }
@@ -27,8 +30,8 @@ export class Graph{
     this.nodes = [];
     this.links = [];
   }
-  addNode(data,x=null,y=null){
-    let node = new Node(data,x,y)
+  addNode(data,x=null,y=null,ox,oy){
+    let node = new Node(data,x,y,ox,oy)
     this.nodes.push(node)
   }
   addLink(sName,tName){

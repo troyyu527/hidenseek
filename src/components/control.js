@@ -6,7 +6,7 @@ function Panel({run,randMaze,reset}){
   return (
     <div className="control">
       <button className="go" onClick={run}>Go</button>
-      <button className="random" onClick={randMaze}>Create Random Obstacle Layout</button>
+      <button className="random" onClick={randMaze}>Generate Random Maze</button>
       <button className="clear" onClick={reset}>Reset</button>
       <div className="select-group">
         <label htmlFor="obstacle">Switch Obstacle</label>

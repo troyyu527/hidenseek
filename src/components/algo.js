@@ -14,7 +14,7 @@ export function initialMap(dataModel,map){
     moveX=0
     for(let j=0;j<map.cols;j++){
       partialArr.push(`_${j}_${i}`)
-      dataModel.addNode(`_${j}_${i}`,moveX,moveY,1)
+      dataModel.addNode(`_${j}_${i}`,moveX,moveY,j,i)
       moveX+=spacingX
     }
     arr.push(partialArr)
@@ -26,12 +26,12 @@ export function initialMap(dataModel,map){
   //3.All diagonal connections (third & fouth add)(optional)
   for(let i=0;i<arr.length;i++){
     arr[i].reduce((accm,curr)=>{
-      dataModel.addLink(accm,curr,0)
+      dataModel.addLink(accm,curr)
       return curr
     })
     if(i<arr.length-1){
       for(let j=0;j<arr[i].length;j++){
-        dataModel.addLink(arr[i][j],arr[i+1][j],1)
+        dataModel.addLink(arr[i][j],arr[i+1][j])
         //(optional for adding diagonal connection)
         // if(j<arr[i].length-1){
         //   dataModel.addLink(arr[i][j],arr[i+1][j+1],1)
@@ -147,201 +147,98 @@ export async function shortestPath(result,setGrid,distRef){
   
 }
 
-export function genMaze(nameGrid,grid,stations,map){
- 
-  let topList=[],botList=[],leftList=[],rightList=[]
-  grid.forEach(n=>{
-    n.color="darkgray"
-    n.weight= 1
-    n.state="regular"
+export function genMaze(nameGrid,grid,stations,map,setGrid){
+  grid.forEach(node=>{
+    node.isVisit=false
+    if(wallCheck(node)) {
+      node.state="wall"
+    }else{
+      node.state="regular"
+    } 
   })
-  //Add wall to 4 borders
-  //top
-  nameGrid[0].forEach(name=>{
-    if(name!==stations[0].node.name && name!==stations[1].node.name) {
-      grid.forEach((n)=>{
-        if(n.name===name){
-          n.state="wall"
-          n.weight=Infinity
-          n.color="darkgray"
-        }
-      })
-      topList.push(name)
+  //Initial the starting cell and stack
+  let currentCell = findCell(1,1)
+  currentCell.isVisit=true
+  let stack = [currentCell]
+  
+  //Recursive backtracker algorithm
+  while(stack.length>0){
+    let neighbors=[];
+    let x = currentCell.ox;
+    let y = currentCell.oy;
+    //check west
+    if(x>1 && !findCell(x-2,y).isVisit) neighbors.push(findCell(x-2,y))
+    //check north
+    if(y>1 && !findCell(x,y-2).isVisit) neighbors.push(findCell(x,y-2))
+    //check east
+    if(x<map.cols-2 && !findCell(x+2,y).isVisit) neighbors.push(findCell(x+2,y))
+    //check south
+    if(y<map.rows-2 && !findCell(x,y+2).isVisit) neighbors.push(findCell(x,y+2))
+    
+    if(neighbors.length>0){
+      //choose random neighbor
+      let neighbor = neighbors[Math.floor(Math.random() * neighbors.length)]
+      //west cell & break wall between them
+      if(neighbor.ox<currentCell.ox) findCell(currentCell.ox-1,currentCell.oy).state="regular"
+      //east cell & break wall between them
+      if(neighbor.ox>currentCell.ox) findCell(currentCell.ox+1,currentCell.oy).state="regular"
+      //north cell & break wall between them
+      if(neighbor.oy<currentCell.oy) findCell(currentCell.ox,currentCell.oy-1).state="regular"
+      //south cell & break wall between them
+      if(neighbor.oy>currentCell.oy) findCell(currentCell.ox,currentCell.oy+1).state="regular"
+      //mark visit and add the cell to the stack
+      neighbor.isVisit=true
+      stack.push(neighbor)
+      currentCell=neighbor
+    }else{
+      //backtracking previous cell
+      currentCell=stack.pop()
     }
+  }
+  function findCell(x,y){
+    let order = x+y*map.cols
+    return grid[order]
+  }
+  //wall check
+  function wallCheck(node){
+    return node.ox%2===0 || node.oy%2===0
+  }
+  //placing stations
+  let emptyCells=[]
+  grid.forEach(node=>{
+    if(node.state=="regular") emptyCells.push(node)
   })
-  topList.pop()
-  topList.unshift()
-  //bot
-  nameGrid[nameGrid.length-1].forEach(name=>{
-    if(name!==stations[0].node.name && name!==stations[1].node.name) {
-      grid.forEach((n)=>{
-        if(n.name===name){
-          n.state="wall"
-          n.weight=Infinity
-          n.color="darkgray"
-        }
-      })
-      botList.push(name)
+  let startIndex = Math.floor(Math.random() * emptyCells.length)
+  let newStart = emptyCells[startIndex]
+  emptyCells.splice(startIndex,1)
+  let goalIndex = Math.floor(Math.random() * emptyCells.length)
+  let newGoal = emptyCells[goalIndex]
+  applyStation("Start",newStart)
+  applyStation("Goal",newGoal)
+  
+  function applyStation(name,newNode){
+    let index=null
+    if(name=="Start"){
+      index=0
+    }else if(name=="Goal"){
+      index=1
     }
-  })
-  botList.pop()
-  botList.unshift()
+    stations[index].node=newNode
+    stations[index].x=newNode.x
+    stations[index].y=newNode.y
+    stations[index].preX=newNode.x
+    stations[index].preY=newNode.y
+  }
 
-  //left
-  nameGrid.forEach(array=>{
-    if( array[0]!==stations[0].node.name && array[0]!==stations[1].node.name) {
-      if(array[0]!=="_0_0" && array[0]!==`_0_${map.rows-1}`)
-      grid.forEach((n)=>{
-        if(n.name===array[0]){
-          n.state="wall"
-          n.weight=Infinity
-          n.color="darkgray"
-        }
-      })
-      leftList.push(array[0])
-    } 
-  })
-  //right
-  nameGrid.forEach(array=>{
-    if( array[array.length-1]!==stations[0].node.name && array[array.length-1]!==stations[1].node.name) {
-      if(array[array.length-1]!==`_${map.cols-1}_0` && array[array.length-1]!==`_${map.cols-1}_${map.rows-1}`)
-      grid.forEach((n)=>{
-        if(n.name===array[array.length-1]){
-          n.state="wall"
-          n.weight=Infinity
-          n.color="darkgray"
-        }
-      })
-      rightList.push(array[array.length-1])
-    } 
-  })
-  let totalList=[leftList,topList,rightList,botList]
-  grow(totalList,map,stations,grid)
+  function stationCheck(node){
+    return node.name===stations[0].node.name||
+    node.name===stations[1].node.name
+  }
+
   return grid
 }
 
   
 
 
-function grow(totalList,map,stations,grid){
-  let dirList=["left","top","right","bot"]
-    let order,growLength,idxList,list
-    while(totalList[0].length>map.rows*0.5 || totalList[1].length>map.cols*0.5){
-      for(let dir=0;dir<dirList.length;dir++){
-        list=totalList[dir]
-        order = Math.floor(Math.random()*list.length)
-        if(dir===0){
-          growLength = Math.floor(Math.random()*(map.cols*0.5))
-          idxList = list[order].split("_")
-          list.splice(order,1)
-          for(let i=1;i<growLength;i++){
-            let obsName = `_${i}_${idxList[2]}`
-            if( obsName!==stations[0].node.name && obsName!==stations[1].node.name){
-              if(checkNeighborWall(obsName,"left")){
-                break
-              }else{
-                grid.forEach((n)=>{
-                  if(n.name===obsName){
-                    n.state="wall"
-                    n.weight=Infinity
-                    n.color="darkgray"
-                  }
-                })
-              }
-            }
-          } 
-        }else if(dir===2){
-          growLength = Math.floor(Math.random()*(map.cols*0.5))
-          idxList = list[order].split("_")
-          list.splice(order,1)
-          for(let i=map.cols-2;i>map.cols-growLength;i--){
-            let obsName = `_${i}_${idxList[2]}`
-            if( obsName!==stations[0].node.name && obsName!==stations[1].node.name){
-              if(checkNeighborWall(obsName,"right")){
-                break
-              }else{
-                grid.forEach((n)=>{
-                  if(n.name===obsName){
-                    n.state="wall"
-                    n.weight=Infinity
-                    n.color="darkgray"
-                  }
-                })
-              }
-            }
-          } 
-        }else if(dir===1){
-          growLength = Math.floor(Math.random()*(map.rows*0.5))
-          idxList = list[order].split("_")
-          list.splice(order,1)
-          for(let i=1;i<growLength;i++){
-            let obsName = `_${idxList[1]}_${i}`
-            if( obsName!==stations[0].node.name && obsName!==stations[1].node.name){
-              if(checkNeighborWall(obsName,"top")){
-                break
-              }else{
-                grid.forEach((n)=>{
-                  if(n.name===obsName){
-                    n.state="wall"
-                    n.weight=Infinity
-                    n.color="darkgray"
-                  }
-                })
-              }
-            }
-          } 
-        }else if(dir===3){
-          growLength = Math.floor(Math.random()*(map.rows*0.5))
-          idxList = list[order].split("_")
-          list.splice(order,1)
-          for(let i=map.rows-2;i>map.rows-growLength;i--){
-            let obsName = `_${idxList[1]}_${i}`
-            if( obsName!==stations[0].node.name && obsName!==stations[1].node.name){
-              if(checkNeighborWall(obsName,"bot")){
-                break
-              }else{
-                grid.forEach((n)=>{
-                  if(n.name===obsName){
-                    n.state="wall"
-                    n.weight=Infinity
-                    n.color="darkgray"
-                  }
-                })
-              }
-            }
-          } 
-        }
-      }
-    }
-  
-}
 
-function checkNeighborWall(name,direction,layer=1){
-  let idx = name.split("_")
- if(direction==="left"){
-  if(document.querySelector(`._${idx[1]}_${Number(idx[2])-layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])+layer}_${idx[2]} img`)) return true
-  if(document.querySelector(`._${idx[1]}_${Number(idx[2])+layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])+layer}_${Number(idx[2])-layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])+layer}_${Number(idx[2])+layer} img`)) return true
- }else if(direction==="right"){
-  if(document.querySelector(`._${idx[1]}_${Number(idx[2])-layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])-layer}_${idx[2]} img`)) return true
-  if(document.querySelector(`._${idx[1]}_${Number(idx[2])+layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])-layer}_${Number(idx[2])-layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])-layer}_${Number(idx[2])+layer} img`)) return true
- }else if(direction==="top"){
-  if(document.querySelector(`._${Number(idx[1])-layer}_${idx[2]} img`)) return true
-  if(document.querySelector(`._${idx[1]}_${Number(idx[2])+layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])+layer}_${idx[2]} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])+layer}_${Number(idx[2])+layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])-layer}_${Number(idx[2])+layer} img`)) return true
- }else if(direction==="bot"){
-  if(document.querySelector(`._${Number(idx[1])-layer}_${idx[2]} img`)) return true
-  if(document.querySelector(`._${idx[1]}_${Number(idx[2])-layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])+layer}_${idx[2]} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])-layer}_${Number(idx[2])-layer} img`)) return true
-  if(document.querySelector(`._${Number(idx[1])+layer}_${Number(idx[2])-layer} img`)) return true
- }
- return false
-}

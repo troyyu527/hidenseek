@@ -9,8 +9,8 @@ import {initialMap,initialSta,Dijkstra, shortestPath,genMaze} from "../component
 const map ={}
 map.width = 800;
 map.height = 400;
-map.rows = 20;
-map.cols = 40;
+map.rows = 21;
+map.cols = 39;
 
 const dataModel = new Graph();
 const MH = new MinHeap()
@@ -67,9 +67,9 @@ function Page(){
     newNode.color="darkgray"
     setGrid(newGrid)
   }
-  const randMaze = () =>{
+  const randMaze = async () =>{
     reset()
-    let newGrid = genMaze(nameGrid,grid,stations,map)
+    let newGrid = genMaze(nameGrid,grid,stations,map,setGrid)
     setGrid([...newGrid])
   }
 

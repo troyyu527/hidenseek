@@ -1,70 +1,107 @@
-# Getting Started with Create React App
+# Hide & Seek — Pathfinding Visualizer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An interactive pathfinding playground. Draw a map, drop a start and a goal, and
+watch six classic graph-search algorithms explore it cell by cell — then race
+them against each other and see which one actually suits the map you built.
 
-## Available Scripts
+**Live:** <http://troyyu527.github.io/hidenseek>
 
-In the project directory, you can run:
+The point isn't just to animate Dijkstra. It's to make the *trade-offs* visible:
+which algorithms guarantee the shortest route, which ones get there faster by
+guessing, and which ones fall apart when the terrain has a cost.
 
-### `npm start`
+## What it does
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Six search algorithms**, animated as they expand:
+  **Dijkstra**, **A\***, **breadth-first (BFS)**, **depth-first (DFS)**,
+  **greedy best-first**, and **bidirectional search**.
+- **Weighted terrain** — sand costs more to cross than open ground, so the
+  algorithms visibly disagree about where they're willing to go. This is where
+  BFS and Dijkstra stop being the same thing.
+- **Comparison mode** — runs all six on an identical map and plots
+  **path cost against cells explored**, then recommends the best fit by a
+  lexicographic rule: the optimal route first, and among optimal routes, the one
+  that did the least work.
+- **Editable grid** — paint walls, place terrain, move start and goal.
+- **Maze generation** and preset scenarios for quick demos.
+- **Live metrics** — path length, cost, and cells explored per run.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tools & technologies
 
-### `npm test`
+| Area | Used |
+|---|---|
+| Framework | **React 18** (function components + hooks) |
+| Build tool | **Vite 5** |
+| Language | JavaScript (ESM) |
+| Styling | SCSS → CSS |
+| Algorithms | Dijkstra, A\*, BFS, DFS, greedy best-first, bidirectional search |
+| Deploy | GitHub Pages via `gh-pages` |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting started
 
-### `npm run build`
+```bash
+npm install
+npm run dev          # or: npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Then open **<http://localhost:3000>**.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+> The port is pinned to `3000` in `vite.config.js` (Vite's own default is 5173).
+> The dev server binds `0.0.0.0`, so you can also reach it from another device on
+> the same network via your machine's LAN address.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Build & preview
 
-### `npm run eject`
+```bash
+npm run build        # production build → dist/
+npm run preview      # serve the built output locally
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+`vite.config.js` sets `base: './'`, so the build uses relative asset paths and
+works from any sub-path — GitHub Pages, a subfolder, or opened from disk.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Deploying
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm run build
+npx gh-pages -d dist
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+`gh-pages` is already a dev dependency and `homepage` is set in `package.json`.
+Note there's no `deploy` npm script — run the two commands above, or add one:
 
-## Learn More
+```json
+"scripts": {
+  "deploy": "npm run build && gh-pages -d dist"
+}
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Project layout
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+src/
+  App.jsx                app shell and routing
+  main.jsx               entry point
+  pages/home.jsx         main visualizer page
+  components/
+    algo.jsx             search algorithm implementations
+    Dijkstra.jsx         Dijkstra / weighted search
+    compare.jsx          comparison mode + scatter plot + recommendation
+    control.jsx          toolbar: algorithm picker, speed, maze, reset
+    cell.jsx             a single grid cell
+    bubble.jsx           tooltips / callouts
+    sta.jsx              run statistics panel
+  img/                   terrain and marker sprites
+  style/                 SCSS sources and compiled CSS
+```
 
-### Code Splitting
+Algorithms, rendering, and state are kept separate: the search functions are
+plain JavaScript over a grid and know nothing about React, which is what makes
+the comparison mode possible — it just runs them all and collects the results.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Reading the comparison chart
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Each dot is one algorithm: **x = cells explored** (work done), **y = path cost**
+(quality of the answer). Bottom-left is best — a shortest route found cheaply.
+Algorithms that fail to reach the goal are listed separately rather than plotted,
+since they have no cost to compare.

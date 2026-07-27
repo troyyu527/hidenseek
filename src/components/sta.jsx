@@ -1,20 +1,34 @@
 import React,{useRef} from "react";
-function Sta({station,map,cellSize,nodesArr}) {
+function Sta({station,map,cellSize,nodesArr,locked,onLayoutChange}) {
   const ref = useRef(null);
   let isDragging=false
 
   const handleMouseDown = (event) => {
+    // The map is locked while an algorithm is running; ignore drags.
+    if (locked) return;
     const element = ref.current;
-    const diffX = event.clientX - station.x;
-    const diffY = event.clientY - station.y;
+    const svg = element.ownerSVGElement;
+    // Convert a screen (client) point into the SVG's own viewBox coordinates so
+    // the drag stays glued to the cursor no matter how the SVG is scaled to fit.
+    const toSvg = (evt) => {
+      const pt = svg.createSVGPoint();
+      pt.x = evt.clientX;
+      pt.y = evt.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    };
+    // Where inside the icon the user grabbed (in SVG units), so it doesn't jump.
+    const startPt = toSvg(event);
+    const grabX = startPt.x - station.x;
+    const grabY = startPt.y - station.y;
     isDragging=true
-    element.setAttribute('cursor', `grab`);
+    element.setAttribute('cursor', `grabbing`);
     const handleMouseMove = (event) => {
       if (!isDragging) {
         return;
       }
-      const posX =Math.max(0,Math.min(map.width-cellSize.spacingX,event.clientX-diffX))
-      const posY =Math.max(0,Math.min(map.height-cellSize.spacingY,event.clientY-diffY))
+      const p = toSvg(event);
+      const posX =Math.max(0,Math.min(map.width-cellSize.spacingX,p.x-grabX))
+      const posY =Math.max(0,Math.min(map.height-cellSize.spacingY,p.y-grabY))
       station.x = posX;
       station.y = posY;
       element.setAttribute('transform', `translate(${station.x},${station.y})`);
@@ -48,6 +62,8 @@ function Sta({station,map,cellSize,nodesArr}) {
       element.setAttribute('cursor', `grab`);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      // Moving Start/Goal changes the layout, so any cached comparison is stale.
+      if (onLayoutChange) onLayoutChange();
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -58,7 +74,8 @@ function Sta({station,map,cellSize,nodesArr}) {
       ref={ref}
       transform={`translate(${station.x},${station.y})`}
       onMouseDown={handleMouseDown}
-      cursor="grab"
+      style={{ pointerEvents: locked ? "none" : "auto" }}
+      cursor={locked ? "not-allowed" : "grab"}
     >
       <image 
         className={station.name}

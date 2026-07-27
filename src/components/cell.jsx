@@ -2,16 +2,17 @@ import React from "react";
 import wall from "../img/wall.png"
 import sand from "../img/sand.png"
 
-function Cell({node,cellSize,cellClick}){
- 
+function Cell({node,cellSize,cellClick,locked}){
+
   return (
-    <g 
+    <g
       className="node-group"
       transform={`translate(${node.x},${node.y})`}
     >
       <g
         className={node.name}
         onClick={cellClick}
+        style={{ pointerEvents: locked ? "none" : "auto", cursor: locked ? "not-allowed" : "pointer" }}
       >
         <rect
           className="node"

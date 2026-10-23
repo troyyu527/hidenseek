@@ -1,0 +1,34 @@
+*{
+  margin: 0;
+  padding: 0;
+  //box-sizing: border-box;
+  
+}
+body{
+  margin: 10px;
+  padding: 5px;
+  background-color:rgb(170, 153, 229);
+  .control{
+    button{
+      padding:2px 5px;
+      margin: 3px 3px;
+    }
+    .select-group label{
+      padding-right:5px;
+    }
+  }
+  .maze{
+    display: flex;
+    justify-content: center;
+    main{
+      width:800px;
+      height:400px;
+      display: flex;
+      position: relative;
+      border: 5px solid black;
+      background-color:gainsboro;
+      padding: 10px;
+      margin: 10px;
+    }
+  }
+}

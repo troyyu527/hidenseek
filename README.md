@@ -4,7 +4,9 @@ An interactive pathfinding playground. Draw a map, drop a start and a goal, and
 watch six classic graph-search algorithms explore it cell by cell — then race
 them against each other and see which one actually suits the map you built.
 
-**Live:** <http://troyyu527.github.io/hidenseek>
+**Live:** <https://troyyu527.github.io/hidenseek>
+
+![Hide & Seek: a generated maze with Dijkstra's shortest route drawn in green, the route stats above and the algorithm controls on the right](docs/images/screenshot.png)
 
 The point isn't just to animate Dijkstra. It's to make the *trade-offs* visible:
 which algorithms guarantee the shortest route, which ones get there faster by
